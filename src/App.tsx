@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import GameList from './pages/GameList'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import FindStillEmoji from './pages/FindStillEmoji'
 import { AuthProvider } from './contexts/AuthContext'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
               <Route path="/games" element={<GameList />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/find-still-emoji" element={<FindStillEmoji />} />
             </Routes>
           </div>
           <Footer />

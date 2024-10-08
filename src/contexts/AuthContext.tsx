@@ -1,8 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { login, register, guestLogin } from '../api/auth';
 
+interface User {
+  userId: string;
+  username: string;
+  token: string;
+}
+
 interface AuthContextType {
-  user: { userId: string; token: string } | null;
+  user: User | null;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   guestLogin: () => Promise<void>;
@@ -12,7 +18,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ userId: string; token: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -23,8 +29,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginUser = async (username: string, password: string) => {
     const data = await login(username, password);
-    setUser(data);
-    localStorage.setItem('user', JSON.stringify(data));
+    const userData = { userId: data.userId, username, token: data.token };
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const registerUser = async (username: string, password: string) => {
@@ -33,8 +40,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginGuest = async () => {
     const data = await guestLogin();
-    setUser(data);
-    localStorage.setItem('user', JSON.stringify(data));
+    const userData = { userId: data.userId, username: 'Guest', token: data.token };
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {

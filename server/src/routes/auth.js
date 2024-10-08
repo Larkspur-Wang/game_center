@@ -8,16 +8,27 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log('注册请求:', { username, password: '***' });
+
+    if (!username || !password) {
+      return res.status(400).json({ message: '用户名和密码都是必填项' });
+    }
+
     const existingUser = await User.findOne({ username });
     if (existingUser) {
+      console.log('用户名已存在:', username);
       return res.status(400).json({ message: '用户名已存在' });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
+
+    console.log('用户注册成功:', username);
     res.status(201).json({ message: '注册成功' });
   } catch (error) {
-    res.status(500).json({ message: '服务器错误' });
+    console.error('注册错误:', error);
+    res.status(500).json({ message: '服务器错误', error: error.message });
   }
 });
 

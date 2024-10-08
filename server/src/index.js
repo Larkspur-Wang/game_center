@@ -12,10 +12,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+// Connect to MongoDB with retry logic
+const connectWithRetry = () => {
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log('成功连接到 MongoDB');
+    })
+    .catch((err) => {
+      console.error('MongoDB 连接错误:', err);
+      console.log('5秒后重试连接...');
+      setTimeout(connectWithRetry, 5000);
+    });
+};
+
+connectWithRetry();
 
 // Routes
 app.use('/api/auth', authRoutes);

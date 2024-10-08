@@ -6,16 +6,17 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const { login, guestLogin } = useAuth()
   const navigate = useNavigate()
+  const { login, guestLogin } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     try {
       await login(username, password)
       navigate('/')
     } catch (err) {
-      setError('Login failed. Please check your username and password.')
+      setError('登录失败，请检查用户名和密码')
     }
   }
 
@@ -24,7 +25,7 @@ const Login: React.FC = () => {
       await guestLogin()
       navigate('/')
     } catch (err) {
-      setError('Guest login failed. Please try again later.')
+      setError('游客登录失败，请稍后重试')
     }
   }
 

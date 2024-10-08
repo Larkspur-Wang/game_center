@@ -1,26 +1,31 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { register } from '../api/auth'
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
-  const { register } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
+
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError('密码不匹配')
       return
     }
+
     try {
-      await register(username, password)
+      console.log('尝试注册:', { username, password: '***' });
+      const response = await register(username, password)
+      console.log('注册响应:', response);
       navigate('/login')
     } catch (err) {
-      setError('Registration failed. Please try again later.')
+      console.error('注册错误:', err)
+      setError(err instanceof Error ? err.message : '注册失败，请稍后重试')
     }
   }
 
