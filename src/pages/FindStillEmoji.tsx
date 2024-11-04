@@ -32,13 +32,16 @@ const FindStillEmoji: React.FC = () => {
   useEffect(() => {
     const updateGridSize = () => {
       if (containerRef.current && gameAreaRef.current) {
-        const navbarHeight = 84 // 估计导航栏高度
-        const footerHeight = 80 // 估计页脚高度
-        const headerHeight = 20 // 游戏标题和分数区域的高度
+        const navbarHeight = 84
+        const footerHeight = 80
+        const headerHeight = 40 // 增加了一点高度
         const availableHeight = window.innerHeight - navbarHeight - footerHeight - headerHeight
-        const gameAreaWidth = gameAreaRef.current.clientWidth
+        const gameAreaWidth = containerRef.current.clientWidth - 16 // 减去padding
 
-        const cellSize = 40 // 每个 emoji 单元格的大小
+        const cellSize = Math.min(
+          Math.floor(availableHeight / 10),
+          Math.floor(gameAreaWidth / 18)
+        )
         const cols = Math.floor(gameAreaWidth / cellSize)
         const rows = Math.floor(availableHeight / cellSize)
 
@@ -97,7 +100,7 @@ const FindStillEmoji: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen" ref={containerRef}>
+    <div className="flex flex-col h-screen overflow-hidden" ref={containerRef}>
       <div className="bg-gray-800 bg-opacity-90 p-2">
         <h2 className="text-2xl font-bold text-minecraft-green inline-block mr-4">Find the Still Emoji</h2>
         <span className="mr-4">Score: {score}</span>
@@ -106,7 +109,7 @@ const FindStillEmoji: React.FC = () => {
       </div>
       <div className="flex-grow overflow-hidden p-2 bg-gray-900" ref={gameAreaRef}>
         <div 
-          className="grid gap-1 h-full"
+          className="grid gap-1 h-full w-full"
           style={{ 
             gridTemplateColumns: `repeat(${gridSize.cols}, 1fr)`,
             gridTemplateRows: `repeat(${gridSize.rows}, 1fr)`
